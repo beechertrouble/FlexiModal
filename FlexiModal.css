@@ -17,8 +17,8 @@
 	right:0px;
 	bottom:0px;
 	left:0px;
-	background:rgba(255,255,255,0.75);
-	z-index:5000;
+	background:#000;
+	z-index:10000;
 }
 
 	#FM_curtain.transparent {
@@ -47,7 +47,7 @@
 	background: transparent none;
 	width: 100%;
 	height: auto;
-	z-index: 5100;
+	z-index: 10100;
 	-moz-transition: width height opacity .15s ease-out;
 	-webkit-transition: width height opacity .15s ease-out;
 	-o-transition: width height opacity .15s ease-out;
@@ -70,7 +70,7 @@
 			min-width: 300px;
 			min-height: 150px;
 			margin:1em auto 0;
-			background: #fff url(img/ajax-loader.gif) no-repeat center center;
+			background: #fff no-repeat center center;
 			overflow: hidden;
 		}
 		
@@ -144,7 +144,7 @@
 						
 			#FM_caption {
 				padding: 1em 7em 1em 1em;
-				background-color: #fff;
+				background-color: #000;
 				font-style: italic;
 			}
 		

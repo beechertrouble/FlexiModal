@@ -26,7 +26,7 @@
 		</div>
 	</div>
 	<div id="FM_loader"></div>
-	<a id="close_curtain" href="#">X</a>
+	<a id="FM_close_curtain" href="#">X</a>
 *
 * @beecher : todo :
 * 	- local caching 
@@ -48,12 +48,13 @@ var FlexiModal = function(media) {
 	this.currentIdx = 0;
 	this.showCallback = undefined;
 	this.hideCallback = undefined;
-	this.closeHTML = '<a id="close_curtain" href="#">X</a>';
+	this.closeHTML = '<a id="FM_close_curtain" href="#">X</a>';
 	this.centerTryCount = 0;
 
 	// ======================== funcs …
 	this.load = function(media) {		
-				
+	
+		
 		$("#FM_wrap").html(media.content);
 			
 		var caption = media.caption;
@@ -289,6 +290,7 @@ var FlexiModal = function(media) {
 			this.bind();
 		
 		var media = this.media[0];
+		
 		this.currentIdx = 0;
 				
 		if(idxOrSrc !== undefined) {
@@ -317,7 +319,6 @@ var FlexiModal = function(media) {
 			.delay(500)
 			.fadeIn(500, function() {
 				
-				console.log('visible, to try the showcallback. : ', me.showCallback);
 				me.doCallback(me.showCallback);
 				
 			});
@@ -466,14 +467,16 @@ var FlexiModal = function(media) {
 	} //
 	this.blur = function() {
 		
-		$("body *")
+		$("body")
+			.children()
 			.not('#FM_curtain, #FM_close_curtain, #FM_layer')
 			.addClass("blurry");	
 		
 	} //
 	this.unBlur = function() {
 		
-		$("body *")
+		$("body")
+			.children()
 			.not('#FM_curtain, #FM_close_curtain, #FM_layer')
 			.removeClass("blurry");	
 		
