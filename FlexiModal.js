@@ -9,23 +9,23 @@
 *	
 *
 * requires some css & the following html
-	<div id="loading"></div>
-	<div id="curtain">
+	<div id="FM_loading"></div>
+	<div id="FM_curtain">
 	</div>
-	<div id="modal_layer">
-		<div id="modal_uber_wrap">
-			<div id="modal_wrap">
+	<div id="FM_layer">
+		<div id="FM_uber_wrap">
+			<div id="FM_wrap">
 			</div>
-			<a id="modal_prev" class="modal_nav" href="#" rel="prev"></a>
-			<a id="modal_next" class="modal_nav" href="#" rel="next"></a>
-			<div id="modal_nav_wrap">
-				<div id="modal_caption"></div>
-				<div id="modal_subnav_wrap"></div>
-				<div id="modal_pagemarker"></div>
+			<a id="FM_prev" class="FM_nav" href="#" rel="prev"></a>
+			<a id="FM_next" class="FM_nav" href="#" rel="next"></a>
+			<div id="FM_nav_wrap">
+				<div id="FM_caption"></div>
+				<div id="FM_subnav_wrap"></div>
+				<div id="FM_pagemarker"></div>
 			</div>
 		</div>
 	</div>
-	<div id="modal_loader"></div>
+	<div id="FM_loader"></div>
 	<a id="close_curtain" href="#">X</a>
 *
 * @beecher : todo :
@@ -54,7 +54,7 @@ var FlexiModal = function(media) {
 	// ======================== funcs …
 	this.load = function(media) {		
 				
-		$("#modal_wrap").html(media.content);
+		$("#FM_wrap").html(media.content);
 			
 		var caption = media.caption;
 				
@@ -63,13 +63,13 @@ var FlexiModal = function(media) {
 			case (caption === null):
 			case (caption == ''):
 			case (caption === undefined):
-				$("#modal_caption").html('');
-				$("#modal_caption").hide();
+				$("#FM_caption").html('');
+				$("#FM_caption").hide();
 				break;
 			
 			default:
-				$("#modal_caption").html(caption);
-				$("#modal_caption").show();
+				$("#FM_caption").html(caption);
+				$("#FM_caption").show();
 				break;	
 		
 		}
@@ -78,14 +78,14 @@ var FlexiModal = function(media) {
 	this.center = function() {
 					
 		var ME = this,
-			imgTest = $("#modal_wrap").html().indexOf('<img') >= 0 ? true : false;
+			imgTest = $("#FM_wrap").html().indexOf('<img') >= 0 ? true : false;
 				
 		ME.centerIt();
 		
 		/*
 		if(imgTest) {
 			
-			$("#modal_wrap img").load(function(){
+			$("#FM_wrap img").load(function(){
 				
 				ME.centerIt();
 				
@@ -103,8 +103,8 @@ var FlexiModal = function(media) {
 		var ME = this;
 		
 		var wH = $(window).height(),
-			subNavHeight = $("#modal_subnav_wrap").height() === undefined ? 0 : $("#modal_subnav_wrap").height() * 1,
-			mH = $("#modal_wrap").height() + subNavHeight,
+			subNavHeight = $("#FM_subnav_wrap").height() === undefined ? 0 : $("#FM_subnav_wrap").height() * 1,
+			mH = $("#FM_wrap").height() + subNavHeight,
 			scrollTop = $(window).scrollTop(),
 			mTop = mH < wH ? Math.floor( (wH - mH) / 2) + scrollTop : scrollTop;
 			
@@ -119,7 +119,7 @@ var FlexiModal = function(media) {
 			
 		} else {
 						
-			$("#modal_layer")
+			$("#FM_layer")
 				.css({
 					'top': mTop + 'px',
 					'left': '0px'
@@ -148,8 +148,8 @@ var FlexiModal = function(media) {
 			
 			this.requireHTML();
 			this.setMedia(); 
-			this.mainPieces = $("#curtain, #modal_layer, #close_curtain, #modal_uber_wrap");
-			this.loaderBg = $("#modal_wrap").css('background-image');
+			this.mainPieces = $("#FM_curtain, #FM_layer, #FM_close_curtain, #FM_uber_wrap");
+			this.loaderBg = $("#FM_wrap").css('background-image');
 			
 			var FM = this;
 					
@@ -163,7 +163,7 @@ var FlexiModal = function(media) {
 				});
 			
 			/* do not require double click on ipad */
-			$(".mobile #close_curtain")
+			$(".mobile #FM_close_curtain")
 				.bind('mouseover', function(e){
 					
 					e.preventDefault();
@@ -172,23 +172,23 @@ var FlexiModal = function(media) {
 					
 				});
 			
-			$("#close_curtain, #modal_wrap, #modal_wrap *")
+			$("#FM_close_curtain, #FM_wrap, #FM_wrap *")
 				.bind('click', function(e){
 					
 					 e.stopPropagation();	
 					 		
 				});
 				
-			$(".modal_nav")
+			$(".FM_nav")
 				.bind('click', function(e){
 					
 					e.preventDefault();
 					
-					if($(this).is("#modal_prev")) {
+					if($(this).is("#FM_prev")) {
 						
 						FM.prev();
 					
-					} else if($(this).is("#modal_next"))  {
+					} else if($(this).is("#FM_next"))  {
 						
 						FM.next();
 					
@@ -246,14 +246,14 @@ var FlexiModal = function(media) {
 				
 				var current = currentIdx == i ? 'active' : '';
 				
-				subnav += '<a id="modal_subnav_' + i + '" class="modal_subnav_button ' + current + '" rel="' + i + '">' + (i + 1) + '</a>';
+				subnav += '<a id="FM_subnav_' + i + '" class="FM_subnav_button ' + current + '" rel="' + i + '">' + (i + 1) + '</a>';
 				
 				if((i + 1) == FM.media.length) {
 					
-					$("#modal_subnav_wrap").html(subnav);
+					$("#FM_subnav_wrap").html(subnav);
 					
-					$(".modal_subnav_button")
-						.not(".modal_subnav_button.active")
+					$(".FM_subnav_button")
+						.not(".FM_subnav_button.active")
 						.unbind()
 						.bind('click', function(e) {
 							
@@ -265,7 +265,7 @@ var FlexiModal = function(media) {
 														
 						});
 						
-					$(".modal_nav, #modal_pagemarker, #modal_subnav_wrap").show();
+					$(".FM_nav, #FM_pagemarker, #FM_subnav_wrap").show();
 					
 				}
 				
@@ -273,7 +273,7 @@ var FlexiModal = function(media) {
 					
 		} else {
 			
-			$(".modal_nav, #modal_pagemarker, #modal_subnav_wrap").hide();
+			$(".FM_nav, #FM_pagemarker, #FM_subnav_wrap").hide();
 		
 		}
 		
@@ -306,14 +306,14 @@ var FlexiModal = function(media) {
 		this.center();
 		
 		this.mainPieces
-			.not("#modal_uber_wrap")
+			.not("#FM_uber_wrap")
 			.fadeIn(500, function(){
 			
 				me.blur();
 			
 			});
 			
-		$("#modal_uber_wrap")
+		$("#FM_uber_wrap")
 			.delay(500)
 			.fadeIn(500, function() {
 				
@@ -324,7 +324,7 @@ var FlexiModal = function(media) {
 		
 		var pageMarker = (this.currentIdx + 1) + ' / ' + this.count;	
 			
-		$("#modal_pagemarker").html(pageMarker);
+		$("#FM_pagemarker").html(pageMarker);
 			
 											
 	} //
@@ -335,10 +335,10 @@ var FlexiModal = function(media) {
 		me.unBlur();
 		
 		this.mainPieces	
-			.not("#modal_uber_wrap")
+			.not("#FM_uber_wrap")
 			.fadeOut("fast", function(){
 				
-				$("#modal_layer")
+				$("#FM_layer")
 					.css({
 						top : '-9999px',
 						left : '-9999px',
@@ -347,7 +347,7 @@ var FlexiModal = function(media) {
 				
 			});	
 			
-		$("#modal_uber_wrap")
+		$("#FM_uber_wrap")
 			.fadeOut("fast", function() {
 				
 				me.doCallback(me.hideCallback);
@@ -359,28 +359,28 @@ var FlexiModal = function(media) {
 	} //
 	this.requireHTML = function() {
 		
-		var HTML = '<div id="loading"></div>'
-					+ '<div id="curtain">'
+		var HTML = '<div id="FM_loading"></div>'
+					+ '<div id="FM_curtain">'
 					+ '</div>'
-					+ '<div id="modal_layer">'
-						+ '<div id="modal_uber_wrap">'
+					+ '<div id="FM_layer">'
+						+ '<div id="FM_uber_wrap">'
 							+ this.closeHTML
-							+ '<div id="modal_wrap">'
+							+ '<div id="FM_wrap">'
 							+ '</div>'
-							+ '<a id="modal_prev" class="modal_nav" href="#" rel="prev"></a>'
-							+ '<a id="modal_next" class="modal_nav" href="#" rel="next"></a>'
-							+ '<div id="modal_nav_wrap">'
-								+ '<div id="modal_caption"></div>'
-								+ '<div id="modal_subnav_wrap"></div>'
-								+ '<div id="modal_pagemarker"></div>'
+							+ '<a id="FM_prev" class="FM_nav" href="#" rel="prev"></a>'
+							+ '<a id="FM_next" class="FM_nav" href="#" rel="next"></a>'
+							+ '<div id="FM_nav_wrap">'
+								+ '<div id="FM_caption"></div>'
+								+ '<div id="FM_subnav_wrap"></div>'
+								+ '<div id="FM_pagemarker"></div>'
 							+ '</div>'
 						+ '</div>'
 					+ '</div>'
-					+ '<div id="modal_loader"></div>';
+					+ '<div id="FM_loader"></div>';
 				
-		if($("#modal_layer").length <= 0) {
+		if($("#FM_layer").length <= 0) {
 							
-			$("#main_article").append(HTML);
+			$("body").append(HTML);
 			
 		}
 		
@@ -466,17 +466,15 @@ var FlexiModal = function(media) {
 	} //
 	this.blur = function() {
 		
-		$("body")
-			.children()
-			.not('#curtain, #close_curtain, #modal_layer, #social_wrap, .social_uber_wrap')
+		$("body *")
+			.not('#FM_curtain, #FM_close_curtain, #FM_layer')
 			.addClass("blurry");	
 		
 	} //
 	this.unBlur = function() {
 		
-		$("body")
-			.children()
-			.not('#curtain, #close_curtain, #modal_layer, #social_wrap, .social_uber_wrap')
+		$("body *")
+			.not('#FM_curtain, #FM_close_curtain, #FM_layer')
 			.removeClass("blurry");	
 		
 	} //
