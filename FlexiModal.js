@@ -8,25 +8,7 @@
 	 	- caption
 *	
 *
-* requires some css & the following html
-	<div id="FM_loading"></div>
-	<div id="FM_curtain">
-	</div>
-	<div id="FM_layer">
-		<div id="FM_uber_wrap">
-			<div id="FM_wrap">
-			</div>
-			<a id="FM_prev" class="FM_nav" href="#" rel="prev"></a>
-			<a id="FM_next" class="FM_nav" href="#" rel="next"></a>
-			<div id="FM_nav_wrap">
-				<div id="FM_caption"></div>
-				<div id="FM_subnav_wrap"></div>
-				<div id="FM_pagemarker"></div>
-			</div>
-		</div>
-	</div>
-	<div id="FM_loader"></div>
-	<a id="FM_close_curtain" href="#">X</a>
+* requires some css 
 *
 * @beecher : todo :
 * 	- local caching 
@@ -35,27 +17,44 @@
 *	- animations ?
 */
 
-var FlexiModal = function(media) {
+window.FlexiModalCount = 0;
 
+var FlexiModal = function(args) {
+	
+	FlexiModalCount++;
+
+	args = args !== undefined ? args : {};
+		
+	this.ID = args.ID !== undefined ? args.ID : 'FM_' + FlexiModalCount;
 	this.mainPieces = '';
 	this.loaderBg = '';
 	this.isBound = false;
 	this.isOpen = false;
-	this.media = media;
-	this.showCaptions = false;
+	this.loaded = false;
+	this.media = args.media !== undefined ? args.media : undefined;
+	this.showCaptions = args.showCaptions !== undefined ? args.showCaptions : false;
 	this.captions = [];
 	this.count = 0;
-	this.currentIdx = 0;
-	this.showCallback = undefined;
-	this.hideCallback = undefined;
-	this.closeHTML = '<a id="FM_close_curtain" href="#">X</a>';
+	this.currentIdx = args.currentIdx !== undefined ? args.currentIdx : 0;
+	this.showCallback = args.showCallback !== undefined ? args.showCallback : undefined;
+	this.hideCallback = args.hideCallback !== undefined ? args.hideCallback : undefined;
+	this.HTMLadded = false;
+	this.closeHTML = '';
+	this.closePos = args.closePos !== undefined ? args.closePos : 'modal'; // window | modal
 	this.centerTryCount = 0;
+	this.doBlur = args.doBlur !== undefined ? args.doBlur : false;
+	this.clearContent = args.clearContent !== undefined ? args.clearContent : true;
 
 	// ======================== funcs …
 	this.load = function(media) {		
 	
+		var ID = this.ID,
+			content = '<div id="' + ID + '_content_wrap">' + media.content + '</div>';
 		
-		$("#FM_wrap").html(media.content);
+		$("#" + ID + "_content_wrap").remove();
+		$("#" + ID + "_wrap").append(content);	
+		
+		this.loaded = true;	
 			
 		var caption = media.caption;
 				
@@ -64,13 +63,11 @@ var FlexiModal = function(media) {
 			case (caption === null):
 			case (caption == ''):
 			case (caption === undefined):
-				$("#FM_caption").html('');
-				$("#FM_caption").hide();
+				$("#" + ID + "_caption").html('').hide();
 				break;
 			
 			default:
-				$("#FM_caption").html(caption);
-				$("#FM_caption").show();
+				$("#" + ID + "_caption").html(caption).show();
 				break;	
 		
 		}
@@ -79,7 +76,8 @@ var FlexiModal = function(media) {
 	this.center = function() {
 					
 		var ME = this,
-			imgTest = $("#FM_wrap").html().indexOf('<img') >= 0 ? true : false;
+			ID = this.ID,
+			imgTest = $("#" + ID + "_wrap").html().indexOf('<img') >= 0 ? true : false;
 				
 		ME.centerIt();
 		
@@ -101,11 +99,12 @@ var FlexiModal = function(media) {
 	} //
 	this.centerIt = function() {
 		
-		var ME = this;
+		var FM = this,
+			ID = this.ID;
 		
 		var wH = $(window).height(),
-			subNavHeight = $("#FM_subnav_wrap").height() === undefined ? 0 : $("#FM_subnav_wrap").height() * 1,
-			mH = $("#FM_wrap").height() + subNavHeight,
+			subNavHeight = $("#" + ID + "_subnav_wrap").height() === undefined ? 0 : $("#" + ID + "_subnav_wrap").height() * 1,
+			mH = $("#" + ID + "_wrap").height() + subNavHeight,
 			scrollTop = $(window).scrollTop(),
 			mTop = mH < wH ? Math.floor( (wH - mH) / 2) + scrollTop : scrollTop;
 			
@@ -116,11 +115,11 @@ var FlexiModal = function(media) {
 		if(mH == 0 && this.centerTryCount < 10) {
 		
 			this.centerTryCount = this.centerTryCount + 1;
-			setTimeout(function() { ME.centerIt(); }, 200);
+			setTimeout(function() { FM.centerIt(); }, 200);
 			
 		} else {
 						
-			$("#FM_layer")
+			$("#" + ID + "_layer")
 				.css({
 					'top': mTop + 'px',
 					'left': '0px'
@@ -147,12 +146,16 @@ var FlexiModal = function(media) {
 		
 		if(!this.isBound) {
 			
-			this.requireHTML();
-			this.setMedia(); 
-			this.mainPieces = $("#FM_curtain, #FM_layer, #FM_close_curtain, #FM_uber_wrap");
-			this.loaderBg = $("#FM_wrap").css('background-image');
+			var FM = this,
+				ID = this.ID;
 			
-			var FM = this;
+			if(!this.HTMLadded)
+				this.requireHTML();
+				
+			this.setMedia(); 
+			this.mainPieces = $("#" + ID + "_curtain, #" + ID + "_layer, #" + ID + "_close_curtain, #" + ID + "_uber_wrap");
+			this.nextPrev = $("#" + ID + "_next, #" + ID + "_prev");
+			this.loaderBg = $("#" + ID + "_wrap").css('background-image');
 					
 			this.mainPieces
 				.bind('click', function(e){
@@ -164,7 +167,7 @@ var FlexiModal = function(media) {
 				});
 			
 			/* do not require double click on ipad */
-			$(".mobile #FM_close_curtain")
+			$(".mobile #" + ID + "_close_curtain")
 				.bind('mouseover', function(e){
 					
 					e.preventDefault();
@@ -173,23 +176,23 @@ var FlexiModal = function(media) {
 					
 				});
 			
-			$("#FM_close_curtain, #FM_wrap, #FM_wrap *")
+			$("#" + ID + "_close_curtain, #" + ID + "_wrap, #" + ID + "_wrap *")
 				.bind('click', function(e){
 					
 					 e.stopPropagation();	
 					 		
 				});
 				
-			$(".FM_nav")
+			this.nextPrev
 				.bind('click', function(e){
 					
 					e.preventDefault();
 					
-					if($(this).is("#FM_prev")) {
+					if($(this).is(".FM_prev")) {
 						
 						FM.prev();
 					
-					} else if($(this).is("#FM_next"))  {
+					} else if($(this).is(".FM_next"))  {
 						
 						FM.next();
 					
@@ -235,27 +238,27 @@ var FlexiModal = function(media) {
 	
 	} //
 	this.showHideNav = function() {
+		
+		var FM = this,
+			ID = this.ID;
 				
 		if(this.count > 1) {
 		
-			var FM = this,
-				subnav = '',
+			var subnav = '',
 				currentIdx = this.currentIdx;
 			
 			// build subnav
-			for(i=0;i<this.media.length;i++) {
+			for(var i=0;i<this.media.length;i++) {
 				
 				var current = currentIdx == i ? 'active' : '';
 				
-				subnav += '<a id="FM_subnav_' + i + '" class="FM_subnav_button ' + current + '" rel="' + i + '">' + (i + 1) + '</a>';
+				subnav += '<a id="FM_subnav_' + i + '" class="'  + ID + '_subnav_button FM_subnav_button ' + current + '" rel="' + i + '">' + (i + 1) + '</a>';
 				
 				if((i + 1) == FM.media.length) {
 					
-					$("#FM_subnav_wrap").html(subnav);
+					$("#" + ID + "_subnav_wrap").html(subnav);
 					
-					$(".FM_subnav_button")
-						.not(".FM_subnav_button.active")
-						.unbind()
+					$("." + ID + "_subnav_button")
 						.bind('click', function(e) {
 							
 							e.preventDefault();
@@ -266,7 +269,7 @@ var FlexiModal = function(media) {
 														
 						});
 						
-					$(".FM_nav, #FM_pagemarker, #FM_subnav_wrap").show();
+					$("." + ID + "_nav_item").show();
 					
 				}
 				
@@ -274,14 +277,15 @@ var FlexiModal = function(media) {
 					
 		} else {
 			
-			$(".FM_nav, #FM_pagemarker, #FM_subnav_wrap").hide();
+			$("." + ID + "_nav_item").hide();
 		
 		}
 		
 	} //
 	this.show = function(idxOrSrc) {
 				
-		var me = this;
+		var me = this,
+			ID = me.ID;
 		
 		this.isOpen = true;
 		
@@ -300,22 +304,23 @@ var FlexiModal = function(media) {
 			this.currentIdx = typeof idxOrSrc == "number" ? idxOrSrc : this.media.indexOf(idxOrSrc);
 						
 		}
-				
-		this.load(media);
+		
+		if(!this.loaded || this.clearContent)		
+			this.load(media);
 		
 		this.showHideNav();
 		
 		this.center();
 		
 		this.mainPieces
-			.not("#FM_uber_wrap")
+			.not("#" + ID + "_uber_wrap")
 			.fadeIn(500, function(){
 			
 				me.blur();
 			
 			});
 			
-		$("#FM_uber_wrap")
+		$("#" + ID + "_uber_wrap")
 			.delay(500)
 			.fadeIn(500, function() {
 				
@@ -325,21 +330,22 @@ var FlexiModal = function(media) {
 		
 		var pageMarker = (this.currentIdx + 1) + ' / ' + this.count;	
 			
-		$("#FM_pagemarker").html(pageMarker);
+		$("#" + ID + "_pagemarker").html(pageMarker);
 			
 											
 	} //
 	this.close = function() {
 		
-		var me = this;
+		var me = this,
+			ID = me.ID;
 		
 		me.unBlur();
 		
 		this.mainPieces	
-			.not("#FM_uber_wrap")
+			.not("#" + ID + "_uber_wrap")
 			.fadeOut("fast", function(){
 				
-				$("#FM_layer")
+				$("#" + ID + "_layer")
 					.css({
 						top : '-9999px',
 						left : '-9999px',
@@ -348,7 +354,7 @@ var FlexiModal = function(media) {
 				
 			});	
 			
-		$("#FM_uber_wrap")
+		$("#" + ID + "_uber_wrap")
 			.fadeOut("fast", function() {
 				
 				me.doCallback(me.hideCallback);
@@ -359,31 +365,33 @@ var FlexiModal = function(media) {
 	
 	} //
 	this.requireHTML = function() {
+	
+		var ID = this.ID;
+			this.closeHTML = '<a id="' + ID + '_close_curtain" class="FM_close_curtain" href="#">X</a>';
+			windowClosePos = this.closePos == 'window' ? this.closeHTML : '',
+			modalClosePos = this.closePos == 'modal' ? this.closeHTML : '';
 		
-		var HTML = '<div id="FM_loading"></div>'
-					+ '<div id="FM_curtain">'
-					+ '</div>'
-					+ '<div id="FM_layer">'
-						+ '<div id="FM_uber_wrap">'
-							+ this.closeHTML
-							+ '<div id="FM_wrap">'
+		var HTML = '<div id="' + ID + '_loading" class="FM_loading"></div>'
+					+ '<div id="' + ID + '_curtain" class="FM_curtain"></div>'
+					+ '<div id="' + ID + '_layer" class="FM_layer">'
+						+ '<div id="' + ID + '_uber_wrap" class="FM_uber_wrap">'
+							+ windowClosePos
+							+ '<div id="' + ID + '_wrap" class="FM_wrap">'
+								+ modalClosePos
 							+ '</div>'
-							+ '<a id="FM_prev" class="FM_nav" href="#" rel="prev"></a>'
-							+ '<a id="FM_next" class="FM_nav" href="#" rel="next"></a>'
-							+ '<div id="FM_nav_wrap">'
-								+ '<div id="FM_caption"></div>'
-								+ '<div id="FM_subnav_wrap"></div>'
-								+ '<div id="FM_pagemarker"></div>'
+							+ '<a id="' + ID + '_prev" class="FM_prev FM_nav ' + ID + '_nav_item" href="#" rel="prev"></a>'
+							+ '<a id="' + ID + '_next" class="FM_next FM_nav ' + ID + '_nav_item" href="#" rel="next"></a>'
+							+ '<div id="' + ID + '_nav_wrap" class="FM_nav_wrap">'
+								+ '<div id="' + ID + '_caption" class="FM_caption"></div>'
+								+ '<div class="FM_subnav_wrap ' + ID + '_nav_item"></div>'
+								+ '<div class="FM_pagemarker ' + ID + '_nav_item"></div>'
 							+ '</div>'
 						+ '</div>'
-					+ '</div>'
-					+ '<div id="FM_loader"></div>';
+					+ '</div>';
 				
-		if($("#FM_layer").length <= 0) {
-							
-			$("body").append(HTML);
-			
-		}
+		$("body").append(HTML);
+		
+		this.HTMLadded = true;
 		
 	} //
 	this.addCallback = function(at, newCallback) {
@@ -467,20 +475,16 @@ var FlexiModal = function(media) {
 	} //
 	this.blur = function() {
 		
-		$("body")
-			.children()
-			.not('#FM_curtain, #FM_close_curtain, #FM_layer')
-			.addClass("blurry");	
+		if(this.doBlur)
+			$("body").children().not('.FM_curtain, .FM_close_curtain, .FM_layer').addClass("blurry");	
 		
 	} //
 	this.unBlur = function() {
 		
-		$("body")
-			.children()
-			.not('#FM_curtain, #FM_close_curtain, #FM_layer')
-			.removeClass("blurry");	
+		if(this.doBlur)
+			$("body").children().not('.FM_curtain, .FM_close_curtain, .FM_layer').removeClass("blurry");	
 		
 	} //
-
+	
 
 } // FlexiModal

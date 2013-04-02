@@ -10,7 +10,7 @@
 
 .FM_show {cursor: pointer;}
 
-#FM_curtain {
+.FM_curtain {
 	position: fixed;
 	display: none;
 	top:0px;
@@ -21,16 +21,16 @@
 	z-index:10000;
 }
 
-	#FM_curtain.transparent {
+	.FM_curtain.transparent {
 		z-index:5;
 		background: transparent;
 	}
 
-#FM_close_curtain {
-	position: fixed;
+.FM_close_curtain {
+	position: absolute;
 	display: none;
 	top:0px;
-	right:0px;
+	right:-55px;
 	background: transparent;
 	width: 48px;
 	height: 48px;
@@ -38,7 +38,7 @@
 	font-size: 50px;
 }
 	
-#FM_layer {
+.FM_layer {
 	position: absolute;
 	display: block;
 	top:-9999px;
@@ -55,7 +55,7 @@
 	transition: width height opacity .15s ease-out;
 }
 
-	#FM_uber_wrap {
+	.FM_uber_wrap {
 		position: relative;
 		width: 90%;
 		max-width: 1200px;
@@ -63,18 +63,18 @@
 		background: transparent none;
 	}
 	
-		#FM_wrap {
+		.FM_wrap {
 			position: relative;
 			width: 90%;
-			max-width: 1000px;
+			max-width: 960px;
 			min-width: 300px;
 			min-height: 150px;
 			margin:1em auto 0;
-			background: #fff no-repeat center center;
-			overflow: hidden;
+			background: .fff no-repeat center center;
+			overflow: visible;
 		}
 		
-			#FM_wrap img {
+			.FM_wrap img {
 				position: relative;
 				display: block;
 				margin:0 auto;
@@ -83,7 +83,7 @@
 			}
 		
 		.FM_message {
-			background: #000;
+			background: .000;
 			padding: 2em;
 			margin:0 auto;
 			line-height: 1.4em;    
@@ -92,7 +92,7 @@
 		}
 			
 			/*  do we want to limit the size of the image to it's original width ? 
-			#FM_wrap img {
+			.FM_wrap img {
 				width: auto;
 				margin: 0 auto;
 			}
@@ -120,21 +120,21 @@
 				top:48%;
 				font-size: 2em;
 				display: inline-block;
-				color:#fff;
+				color:.fff;
 			}
 		
 			.FM_nav:hover {opacity: 1;}
 		
-			#FM_prev {left:0px;}
-				#FM_prev:before {content : '\3008';}
+			.FM_prev {left:0px;}
+				.FM_prev:before {content : '\3008';}
 			
-			#FM_next {right:0px;}
-				#FM_next:before {
+			.FM_next {right:0px;}
+				.FM_next:before {
 					content : '\3009';
 					left: 35%;
 				}
 			
-		#FM_nav_wrap {
+		.FM_nav_wrap {
 			width: 90%;
 			max-width: 1000px;
 			min-width: 100px;
@@ -142,14 +142,13 @@
 			line-height: 1.4em;
 		}		
 						
-			#FM_caption {
-				padding: 1em 7em 1em 1em;
-				background-color: #000;
-				font-style: italic;
+			.FM_caption {
+				padding: 1em 1em 1em 1em;
+				background-color: .000;
 			}
 		
-			#FM_subnav_wrap {
-				background: #fff;
+			.FM_subnav_wrap {
+				background: .fff;
 				padding:0.75em 7em 0.5em 0.5em;
 				text-align: center;
 			}
@@ -168,14 +167,14 @@
 						background: rgba(0,0,0,0.25);
 					}
 		
-			#FM_pagemarker {
+			.FM_pagemarker {
 				position: absolute;
 				top:1em;
 				right:0.5em;
 			}
 			
-			#FM_subnav_wrap,
-			#FM_pagemarker {display: none !important;}
+			.FM_subnav_wrap,
+			.FM_pagemarker {display: none !important;}
 	
 	
 figure.FM_figure {margin:0 0 1em;}
